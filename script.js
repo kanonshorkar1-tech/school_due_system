@@ -1,40 +1,81 @@
-const apiUrl = "https://script.google.com/macros/s/AKfycbxfXZyU_hWQ4YYMsUOv8j7AHkRxx_lGkIzYjXZ9MsVVHN6v85n2KkegJ2RwWcfiEypF/exec";
+const API =
+"https://script.google.com/macros/s/AKfycbxfXZyU_hWQ4YYMsUOv8j7AHkRxx_lGkIzYjXZ9MsVVHN6v85n2KkegJ2RwWcfiEypF/exec";
 
-async function searchStudent() {
+async function searchStudent(){
 
-    const keyword = document.getElementById("searchBox").value.toLowerCase();
+    let search=document.getElementById("searchBox").value.trim().toLowerCase();
 
-    const response = await fetch(apiUrl);
-    const data = await response.json();
+    if(search==""){
+        alert("Roll বা Name লিখুন");
+        return;
+    }
 
-    const student = data.find(item =>
-        item.roll.toString() === keyword ||
-        item.name.toLowerCase().includes(keyword)
+    let response=await fetch(API);
+    let data=await response.json();
+
+    let student=data.find(x=>
+
+        String(x.roll).toLowerCase()==search ||
+
+        String(x.name).toLowerCase().includes(search)
+
     );
+
+    let result=document.getElementById("result");
 
     if(student){
 
-        document.getElementById("result").innerHTML = `
-        <h3>Student Information</h3>
+        result.innerHTML=`
 
-        <p><b>Name:</b> ${student.name}</p>
+<div class="card">
 
-        <p><b>Roll:</b> ${student.roll}</p>
+<h2>${student.name}</h2>
 
-        <p><b>Class:</b> ${student.class}</p>
+<table>
 
-        <p><b>Section:</b> ${student.section}</p>
+<tr>
+<td><b>Roll</b></td>
+<td>${student.roll}</td>
+</tr>
 
-        <p><b>Total Fee:</b> ${student.total}</p>
+<tr>
+<td><b>Class</b></td>
+<td>${student.class}</td>
+</tr>
 
-        <p><b>Paid:</b> ${student.paid}</p>
+<tr>
+<td><b>Section</b></td>
+<td>${student.section}</td>
+</tr>
 
-        <p><b>Due:</b> ${student.due}</p>
-        `;
+<tr>
+<td><b>Target</b></td>
+<td>${student.target}</td>
+</tr>
 
-    }else{
+<tr>
+<td><b>Achievement</b></td>
+<td>${student.achieve}</td>
+</tr>
 
-        document.getElementById("result").innerHTML="<h3>Student Not Found</h3>";
+<tr>
+<td><b>Due</b></td>
+<td style="color:red;font-weight:bold">
+${student.due}
+</td>
+</tr>
+
+</table>
+
+</div>
+
+`;
+
+    }
+
+    else{
+
+        result.innerHTML="<h2 style='color:red'>Student Not Found</h2>";
 
     }
 
